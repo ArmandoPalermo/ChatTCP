@@ -27,7 +27,6 @@ public class ServerConnessioneTCP extends Thread {
            connection=null;
         }
         
-        
         @Override
         public void run(){
             inAscolto(2000);
@@ -57,17 +56,32 @@ public class ServerConnessioneTCP extends Thread {
         
         //risposta server da inoltrare al client
         public void rispondi(){
+            String parametro ="";
+            String comando="";
+            int lunghezzaArray;
+            String[] mex;
 	    boolean a = true;
             String messaggioInput="" , messaggioOutput = "";
             try{
+                BufferedReader inputServerTastiera= new BufferedReader(new InputStreamReader(System.in));
                 BufferedReader inputServer= new BufferedReader(new InputStreamReader(this.connection.getInputStream()));//prende in input il messaggio inviato dal client(non avviene più la lettura da tastiera)
                 PrintStream outputServer= new PrintStream(this.connection.getOutputStream());
+                
                 while(a){
                     messaggioInput=inputServer.readLine();
-                    switch(messaggioInput){//controllo del messaggio di input con la quale si definisce la risposta da definire
+                   mex = messaggioInput.split(":");
+                    lunghezzaArray = mex.length;
+                    if(lunghezzaArray==2){
+                        comando = mex[0];
+                        parametro = mex[1];
+                    }else{
+                        comando = messaggioInput;
+                    }
+                    
+                    switch(comando){//controllo del messaggio di input con la quale si definisce la risposta da definire
                             case "end":
                                 messaggioOutput="Arrivederci";
-							a=false;
+                                a=false;
                                 break;
                             case "ciao":
                                 messaggioOutput ="salve";
@@ -80,25 +94,36 @@ public class ServerConnessioneTCP extends Thread {
                                 messaggioOutput=data.get(Calendar.DATE)+"/"+(data.get(Calendar.MONTH)+1)+"/" + data.get(Calendar.YEAR)
                                         +"  "+data.get(Calendar.HOUR)+":"+data.get(Calendar.MINUTE)+":"+data.get(Calendar.SECOND); //MONTH+1 in modo da comunicare correttamente i mesi
                                 break;
-							case "smile":
-								messaggioOutput="\u263a";
-								break;
-							case "like":
-								messaggioOutput="\uD83D\uDC4D";
-								break;
+                            case "smile":
+				messaggioOutput="\u263a";
+				break;
+			    case "like":
+				messaggioOutput="\uD83D\uDC4D";
+				break;
+                            case "autore":
+                                messaggioOutput="Autore registrato";  
+                            break;
                             default:
-                                messaggioOutput="Non sono in grado di rispondere";
+                                messaggioOutput=inputServerTastiera.readLine();
                                 break;
                         }
+                        if(comando!="autore" && parametro!=""){
+                            System.out.println(parametro+":"+messaggioInput);
+                            System.out.println(messaggioOutput);
+                        }else{
+                            System.out.println(messaggioInput);
+                            System.out.println(messaggioOutput);
+                        }
+                        
                         outputServer.println(messaggioOutput);
                         outputServer.flush();//svuoto lo stream e invio il messaggio
-                        System.out.println(messaggioOutput);
                 }
             }catch(IOException e){
                    System.err.println("Errore di I/O!");
             }
 		
         }
+      
         
         //chiusura della connessione in seguito all'invio del messaggio "chiudi"
         void chiudiConnessione(){
