@@ -7,15 +7,13 @@ package chattcp;
 
 /**
  *
- * @author Administrator
+ * @author Armando Palermo
  */
-public class ChatTCP {
-
-    /**
-     * @param args the command line arguments
-     */
+public class MainServer {
+    
     public static void main(String[] args) {
-        // TODO code application logic here
+               ServerConnessioneTCP server=new ServerConnessioneTCP();
+               server.start();
     }
     
 }
