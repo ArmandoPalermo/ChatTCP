@@ -60,7 +60,7 @@ public class ServerConnessioneTCP extends Thread {
             String comando="";
             int lunghezzaArray;
             String[] mex;
-	    boolean a = true;
+			boolean a = true;
             String messaggioInput="" , messaggioOutput = "";
             try{
                 BufferedReader inputServerTastiera= new BufferedReader(new InputStreamReader(System.in));
@@ -77,43 +77,52 @@ public class ServerConnessioneTCP extends Thread {
                     }else{
                         comando = messaggioInput;
                     }
-                    
+					
+					
+		   if(parametro==""){
+			System.out.println(messaggioInput);
+		    }else{
+			System.out.println(parametro+":"+messaggioInput);
+		    }
+                   
+                   
                     switch(comando){//controllo del messaggio di input con la quale si definisce la risposta da definire
                             case "end":
                                 messaggioOutput="Arrivederci";
                                 a=false;
+				System.out.println(messaggioOutput);
                                 break;
                             case "ciao":
                                 messaggioOutput ="salve";
+				System.out.println(messaggioOutput);
                                 break;
                             case "come stai?":
                                 messaggioOutput ="bene";
+				System.out.println(messaggioOutput);
                                 break;
                             case "data"://restituzione data 
                                 GregorianCalendar data =  new GregorianCalendar();
                                 messaggioOutput=data.get(Calendar.DATE)+"/"+(data.get(Calendar.MONTH)+1)+"/" + data.get(Calendar.YEAR)
-                                        +"  "+data.get(Calendar.HOUR)+":"+data.get(Calendar.MINUTE)+":"+data.get(Calendar.SECOND); //MONTH+1 in modo da comunicare correttamente i mesi
+                                        +"  "+data.get(Calendar.HOUR)+":"+data.get(Calendar.MINUTE)+":"+data.get(Calendar.SECOND); 
+				System.out.println(messaggioOutput);
                                 break;
                             case "smile":
 				messaggioOutput="\u263a";
+				System.out.println(messaggioOutput);
 				break;
 			    case "like":
 				messaggioOutput="\uD83D\uDC4D";
+				System.out.println(messaggioOutput);
 				break;
                             case "autore":
                                 messaggioOutput="Autore registrato";  
+				System.out.println(messaggioOutput);
                             break;
                             default:
-                                messaggioOutput=inputServerTastiera.readLine();
+				messaggioOutput=inputServerTastiera.readLine();
                                 break;
                         }
-                        if(comando!="autore" && parametro!=""){
-                            System.out.println(parametro+":"+messaggioInput);
-                            System.out.println(messaggioOutput);
-                        }else{
-                            System.out.println(messaggioInput);
-                            System.out.println(messaggioOutput);
-                        }
+                       
                         
                         outputServer.println(messaggioOutput);
                         outputServer.flush();//svuoto lo stream e invio il messaggio
