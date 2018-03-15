@@ -17,18 +17,48 @@ import java.util.GregorianCalendar;
 /**
  *
  * @author Armando Palermo
+ * Classe che simula il funzionamento di un server che è in grado di rispondere
+ * a messaggi del client con un pattern di risposte predefinite e con risposta dinamica
+ * in caso si riceva un messaggio che non corrisponde a nessuno presente nello switch.
  */
 public class ServerConnessioneTCP extends Thread {
+       /**
+        * Socket utilizzato per la connessione
+        */
         private Socket connection;
+        
+        /**
+         * Socket utilizzato dal server per accettare connessioni dal client
+         * es. connection=connessioneServer.accept()
+         */
         private ServerSocket connessioneServer;
+        
+        /**
+         * Variabile utilizzata per permettere du avere una colorazione diversa per i messaggi presi in input 
+         * dal client
+         */
         private final String VERDE="\u001B[32m";
+        
+        /**
+         * Variabile utilizzata per ritornare alla colorazione base dello standard output 
+         * per i messaggi inviati dal server
+         */
         private final String Reset="\u001B[34m";
 		
+        /**
+         * COSTRUTTORE
+         * vengono inizializzati a null i due socket
+         */
         ServerConnessioneTCP(){
            connessioneServer=null;
            connection=null;
         }
         
+        /**
+         * Metodo run utilizzato per eseguire i metodi della classe ,utili 
+         * per mettersi in ascolto su una porta, per scambiare messaggi 
+         * e chiudere la connessione
+         */
         @Override
         public void run(){
             inAscolto(2000);
@@ -36,7 +66,13 @@ public class ServerConnessioneTCP extends Thread {
             chiudiConnessione();
         }
         
-        //metodo che fa si che il server passi in modalità "Ascolto" sulla porta inserita come parametro del metodo
+        /**
+         * Viene istanziato il socket del server(ServerSocket) e si mette in ascolto su una determinata porta.
+         * Attraverso la primitiva  accept()  vengono accettate le eventuali connessioni che si verificheranno.
+         * La primitiva accept ritorna  un oggetto di tipo Socket con il quale andremo ad istanziare 
+         * l'attributo connection di questa classe.
+         * @param porta   Il server si mette in ascolto sulla questa porta
+         */
         public void inAscolto(int porta){
             
             try{
@@ -56,39 +92,51 @@ public class ServerConnessioneTCP extends Thread {
 			
         }
         
-        //risposta server da inoltrare al client
+        /**
+         * Metodo che permette di effettuare lo scambio di messaggi tra gli 
+         * host connessi
+         * La struttura principale di questo metodo è uno switch che determina la risposta da inviare al client
+         * a seconda del messaggio recapitato dal client
+         */
         public void rispondi(){
+            //eventuale parametro passato con il comando autore(autore:parametro ====> autore:armando)
+            //utilizzato per spezzare in due il comando in modo da poter effettuare le corrette elaborazione
             String parametro ="";
+            //comando utilizzato per contenere "autore" in modo da poter effettuare il controllo sullo switch
             String comando="";
             int lunghezzaArray;
             String[] mex;
-			boolean a = true;
+            boolean a = true;
             String messaggioInput="" , messaggioOutput = "";
+            
             try{
+                //Istanza degli stream utili:
+                //inputServerTastiera===>permette di prendere delle stringhe inserite da tastiera 
+                //inputServer===>permette di ricevere i messaggi inviati dall'oggetto client
+                //outputServer
                 BufferedReader inputServerTastiera= new BufferedReader(new InputStreamReader(System.in));
                 BufferedReader inputServer= new BufferedReader(new InputStreamReader(this.connection.getInputStream()));//prende in input il messaggio inviato dal client(non avviene più la lettura da tastiera)
                 PrintStream outputServer= new PrintStream(this.connection.getOutputStream());
                 
                 while(a){
-                   messaggioInput=inputServer.readLine();
-                   mex = messaggioInput.split(":");
+                    messaggioInput=inputServer.readLine(); //lettura messaggio inviato dal client
+                    mex = messaggioInput.split(":"); 
                     lunghezzaArray = mex.length;
-                    if(lunghezzaArray==2){
+                    if(lunghezzaArray==2){ //se ci sono 2 elementi allora viene diviso in due per riconoscere il comando autore dal parametro passato(es.armando)
                         comando = mex[0];
                         parametro = mex[1];
                     }else{
                         comando = messaggioInput;
                     }
-					
-					
-		   if(parametro.equals("")){
+                    //stampo il nome dell'autore vicino al messaggio che invia se la variabile parametro è vuota
+		    if(parametro.equals("")){
 			System.out.println(VERDE+messaggioInput+Reset);
 		    }else{
 			System.out.println(VERDE+parametro+":"+messaggioInput+Reset);
 		    }
                    
-                   
-                    switch(comando){//controllo del messaggio di input con la quale si definisce la risposta da definire
+                    //switch di controllo per stabilire la risposta del server
+                    switch(comando){
                             case "end":
                                 messaggioOutput="Arrivederci";
                                 a=false;
@@ -112,12 +160,12 @@ public class ServerConnessioneTCP extends Thread {
                                 messaggioOutput="Autore registrato";  
 				System.out.println(messaggioOutput);
                             break;
-                            default:
+                            default://il server potrà inviare un messaggio da tastiera
 				messaggioOutput=inputServerTastiera.readLine();
-                                if(messaggioOutput.equals("smile")){
+                                if(messaggioOutput.equals("smile")){//se l'utente scriverà la stringa "smile" allora inviarà al client uno smile
                                     messaggioOutput="\u263a";
                                 }
-                                if(messaggioOutput.equals("like")){
+                                if(messaggioOutput.equals("like")){//se l'utente scriverà la stringa "like" allora inviarà al client un like
                                     messaggioOutput="\uD83D\uDC4D";
                                 }
                                 break;
@@ -134,7 +182,10 @@ public class ServerConnessioneTCP extends Thread {
         }
       
         
-        //chiusura della connessione in seguito all'invio del messaggio "chiudi"
+        /**
+         * Ferma il Server Socket e quindi non sarà possibile  ricevere di connessione richieste 
+         * se non riavviando il thread server
+         */
         void chiudiConnessione(){
             try {
                 if (this.connessioneServer!=null) this.connessioneServer.close();

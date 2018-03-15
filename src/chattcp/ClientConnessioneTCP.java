@@ -20,15 +20,36 @@ import java.util.logging.Logger;
  * @author Armando Palermo
  */
 public class ClientConnessioneTCP extends Thread {
+       /**
+        * Socket utilizzato per stabilire una connessione
+        */
         Socket connection;
+        
+       /**
+        * Variabile utilizzata per permettere di avere una colorazione diversa per i messaggi presi in input 
+        * dal client
+        */
         private final String VERDE="\u001B[32m";
+        
+       /**
+        * Variabile utilizzata per ritornare alla colorazione base dello standard output 
+        * per i messaggi inviati dal server
+        */
         private final String Reset="\u001B[0m";
         
+       /**
+        * COSTRUTTORE
+        * viene inizializzato a 1 il socket connection
+        */
        ClientConnessioneTCP(){
            connection=null;
        }
        
-       
+       /**
+        * Metodo run utilizzato per eseguire i metodi della classe, utili 
+        * per instaurare una connessione con un server, scambiare messaggi
+        * e chiudere la connessione
+        */
         @Override
         public void run(){
             avviaConnessione("localhost",2000);
@@ -36,10 +57,13 @@ public class ClientConnessioneTCP extends Thread {
             chiudiConnessione();
         }
        
-       //metodo che avvia la connessione con il server
+       /**
+        * Metodo che permette di stabilire una connesione con il server
+        * NB:eseguire prima il server e poi il client
+        * @param indirizzoServer Indirizzo del server con cui vogliamo connetterci
+        * @param porta  porta sulla quale verrà effettuata la richiesta di connessione
+        */
        public void avviaConnessione(String indirizzoServer, int porta){
-           
-            
             try{
 
                 this.connection = new Socket(indirizzoServer, porta);
@@ -80,7 +104,7 @@ public class ClientConnessioneTCP extends Thread {
                     messaggio=inputClient.readLine();//primo input da tastiera del client
                     
                     
-                    //controllo per insermento  comandi(echo, autore)
+                    //controllo per insermento del comando autore
                     String[] mex = messaggio.split(":");
                     int lunghezzaArray = mex.length;
                     if(lunghezzaArray==2){
@@ -89,7 +113,8 @@ public class ClientConnessioneTCP extends Thread {
                     }else{
                         comando = messaggio;
                     }
-                    
+                    //Controllo lo stato dell'host(se offline non invio nessun messaggio al server)
+                    //se scrivo echo allora reinvio al client il messaggio precedentemene ricevuto dal server
                     if(statoHost){
                         switch(messaggio){
                             case "echo":
@@ -100,7 +125,6 @@ public class ClientConnessioneTCP extends Thread {
                                 statoHost=false;
                                 break;
                             case "smile":
-                                
                                 outputClient.println("\u263a");
                                 break;
                             case "like":
@@ -113,9 +137,9 @@ public class ClientConnessioneTCP extends Thread {
                                 break;
                         }
                         if(!messaggio.equals("offline") && !messaggio.equals("online")){
-                            rispostaServer=inputClientRispServer.readLine();//lettura della risposta inviata dal server
-                            System.out.println(VERDE+rispostaServer+Reset);//stampo la risposta del server
-                            if("end".equals(messaggio)){//chiusura della connessione in casso si invia "end"
+                            rispostaServer=inputClientRispServer.readLine();
+                            System.out.println(VERDE+rispostaServer+Reset);
+                            if("end".equals(messaggio)){
                                     a=false;
                             }
                             messaggioSalvato=rispostaServer;
@@ -135,7 +159,9 @@ public class ClientConnessioneTCP extends Thread {
             }
         }
         
-        //chiusura della connessione in seguito all'invio del messaggio "chiudi"
+        /**
+         * Chiusura del connection socket in modo da concludere la connessione del client
+         */
         void chiudiConnessione(){
                 try {
                     if (this.connection!=null)
