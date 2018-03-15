@@ -21,6 +21,8 @@ import java.util.GregorianCalendar;
 public class ServerConnessioneTCP extends Thread {
         private Socket connection;
         private ServerSocket connessioneServer;
+        private final String VERDE="\u001B[32m";
+        private final String Reset="\u001B[34m";
 		
         ServerConnessioneTCP(){
            connessioneServer=null;
@@ -68,7 +70,7 @@ public class ServerConnessioneTCP extends Thread {
                 PrintStream outputServer= new PrintStream(this.connection.getOutputStream());
                 
                 while(a){
-                    messaggioInput=inputServer.readLine();
+                   messaggioInput=inputServer.readLine();
                    mex = messaggioInput.split(":");
                     lunghezzaArray = mex.length;
                     if(lunghezzaArray==2){
@@ -79,10 +81,10 @@ public class ServerConnessioneTCP extends Thread {
                     }
 					
 					
-		   if(parametro==""){
-			System.out.println(messaggioInput);
+		   if(parametro.equals("")){
+			System.out.println(VERDE+messaggioInput+Reset);
 		    }else{
-			System.out.println(parametro+":"+messaggioInput);
+			System.out.println(VERDE+parametro+":"+messaggioInput+Reset);
 		    }
                    
                    
@@ -105,21 +107,19 @@ public class ServerConnessioneTCP extends Thread {
                                 messaggioOutput=data.get(Calendar.DATE)+"/"+(data.get(Calendar.MONTH)+1)+"/" + data.get(Calendar.YEAR)
                                         +"  "+data.get(Calendar.HOUR)+":"+data.get(Calendar.MINUTE)+":"+data.get(Calendar.SECOND); 
 				System.out.println(messaggioOutput);
-                                break;
-                            case "smile":
-				messaggioOutput="\u263a";
-				System.out.println(messaggioOutput);
-				break;
-			    case "like":
-				messaggioOutput="\uD83D\uDC4D";
-				System.out.println(messaggioOutput);
-				break;
+                               break;
                             case "autore":
                                 messaggioOutput="Autore registrato";  
 				System.out.println(messaggioOutput);
                             break;
                             default:
 				messaggioOutput=inputServerTastiera.readLine();
+                                if(messaggioOutput.equals("smile")){
+                                    messaggioOutput="\u263a";
+                                }
+                                if(messaggioOutput.equals("like")){
+                                    messaggioOutput="\uD83D\uDC4D";
+                                }
                                 break;
                         }
                        

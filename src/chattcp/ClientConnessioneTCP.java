@@ -21,6 +21,8 @@ import java.util.logging.Logger;
  */
 public class ClientConnessioneTCP extends Thread {
         Socket connection;
+        private final String VERDE="\u001B[32m";
+        private final String Reset="\u001B[0m";
         
        ClientConnessioneTCP(){
            connection=null;
@@ -97,6 +99,13 @@ public class ClientConnessioneTCP extends Thread {
                             case "offline":
                                 statoHost=false;
                                 break;
+                            case "smile":
+                                
+                                outputClient.println("\u263a");
+                                break;
+                            case "like":
+                                outputClient.println("\uD83D\uDC4D");
+                                break;
                             default:
                                 messaggioSalvato=rispostaServer;
                                 outputClient.println(messaggio);//invio del messaggio
@@ -105,7 +114,7 @@ public class ClientConnessioneTCP extends Thread {
                         }
                         if(!messaggio.equals("offline") && !messaggio.equals("online")){
                             rispostaServer=inputClientRispServer.readLine();//lettura della risposta inviata dal server
-                            System.out.println(rispostaServer);//stampo la risposta del server
+                            System.out.println(VERDE+rispostaServer+Reset);//stampo la risposta del server
                             if("end".equals(messaggio)){//chiusura della connessione in casso si invia "end"
                                     a=false;
                             }
