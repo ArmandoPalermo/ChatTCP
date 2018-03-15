@@ -124,10 +124,10 @@ public class ClientConnessioneTCP extends Thread {
                             case "offline":
                                 statoHost=false;
                                 break;
-                            case "smile":
+                            case "smile"://se scrivo smile da tastiera allora invio al server uno smile
                                 outputClient.println("\u263a");
                                 break;
-                            case "like":
+                            case "like"://se scrivo like da tastiera allora invio al server un like
                                 outputClient.println("\uD83D\uDC4D");
                                 break;
                             default:

@@ -43,7 +43,7 @@ public class ServerConnessioneTCP extends Thread {
          * Variabile utilizzata per ritornare alla colorazione base dello standard output 
          * per i messaggi inviati dal server
          */
-        private final String Reset="\u001B[34m";
+        private final String Reset="\u001B[0m";
 		
         /**
          * COSTRUTTORE
